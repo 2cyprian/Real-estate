@@ -1,0 +1,34 @@
+{
+  "name": "real-estate",
+  "version": "1.0.0",
+  "description": "A modern real estate platform for property management, rental discovery, and fractional investment in Africa.",
+  "private": true,
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev:web": "npm --workspace frontend-web run dev",
+    "dev:mobile": "npm --workspace mobile run start",
+    "dev:all": "npx turbo run dev --parallel",
+    "build:web": "npm --workspace frontend-web run build",
+    "build:mobile": "npm --workspace mobile run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/2cyprian/Real-estate.git"
+  },
+  "keywords": ["real-estate", "monorepo", "typescript", "fastapi", "react", "react-native"],
+  "author": "Cyprian Odindo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/2cyprian/Real-estate/issues"
+  },
+  "homepage": "https://github.com/2cyprian/Real-estate#readme",
+  "workspaces": [
+    "frontend-web",
+    "mobile",
+    "shared"
+  ],
+  "devDependencies": {
+    "turbo": "^1.10.10"
+  }
+}

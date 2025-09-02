@@ -1,0 +1,30 @@
+# Python / FastAPI
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+
+# Node.js / React / React Native
+node_modules/
+build/
+dist/
+.env
+.expo/
+.next/
+
+# Logs
+*.log
+
+# OS generated files
+.DS_Store
+thumbs.db
+
+# Docker
+*.env
+
+# Turborepo
+.turbo/
