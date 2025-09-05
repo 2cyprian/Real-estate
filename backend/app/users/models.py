@@ -1,10 +1,11 @@
 # Import necessary SQLAlchemy components and utilities
-from sqlalchemy import Column, String, Boolean, DateTime
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, Enum
 from sqlalchemy.dialects.postgresql import UUID, JSONB  # PostgreSQL-specific types
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql import func
 import uuid
 from db.database import Base
+
 
 # Create base class for declarative models
 
@@ -16,7 +17,8 @@ class User(Base):
     - hashed_password: Encrypted password
     - first_name: User's first name
     - last_name: User's last name
-    - is_agent: Boolean flag for agent status
+    - phone_number: User's phone number
+    - role: User's role (owner, agent, buyer, tenant, admin)
     - created_at: Timestamp of user creation
     - updated_at: Timestamp of last update
     """
@@ -32,7 +34,8 @@ class User(Base):
     # User profile fields
     first_name = Column(String)
     last_name = Column(String)
-    is_agent = Column(Boolean, default=False)
+    phone_number = Column(String, nullable=True) # Changed to String to accommodate leading zeros and other formats
+    role = Column(Enum('owner', 'agent', 'buyer', 'tenant', 'admin', name='user_role_enum'), default='tenant', nullable=False)
     
     # Audit timestamps
     created_at = Column(DateTime, default=func.now())

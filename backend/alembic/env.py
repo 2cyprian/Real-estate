@@ -6,7 +6,7 @@ from db.database import Base
 from dotenv import load_dotenv
 
 #importing users 
-from app.users.modals import User
+from app.users.models import User
 # Load .env file
 load_dotenv()
 
