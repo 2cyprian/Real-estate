@@ -1,0 +1,43 @@
+from sqlalchemy.orm import Session
+from app.core.password_utils import verify_password, get_password_hash
+from .models import User
+from .schemas import UserCreate
+
+class UserService:
+    @staticmethod
+    def get_user_by_email(db: Session, email: str) -> User:
+        return db.query(User).filter(User.email == email).first()
+
+    @staticmethod
+    def create_user(db: Session, user: UserCreate) -> User:
+        hashed_password = get_password_hash(user.password)
+        db_user = User(
+            email=user.email,
+            hashed_password=hashed_password,
+            first_name=user.first_name,
+            last_name=user.last_name,
+            phone_number=user.phone_number
+        )
+        db.add(db_user)
+        db.commit()
+        db.refresh(db_user)
+        return db_user
+
+    @staticmethod
+    def authenticate_user(db: Session, email: str, password: str) -> User:
+        user = UserService.get_user_by_email(db, email)
+        if not user:
+            return None
+        if not verify_password(password, user.hashed_password):
+            return None
+        return user
+
+# Keep existing functions for backward compatibility
+def get_user(db: Session, email: str):
+    return UserService.get_user_by_email(db, email)
+
+def create_user(db: Session, user: UserCreate):
+    return UserService.create_user(db, user)
+
+def authenticate_user(db: Session, email: str, password: str):
+    return UserService.authenticate_user(db, email, password)

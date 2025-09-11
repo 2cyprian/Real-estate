@@ -1,7 +1,10 @@
 from sqlalchemy.orm import Session
+from app.users.models import User
+from app.users.schemas import UserCreate
 from app.core.security import get_password_hash, verify_password
-from .models import User
-from .schemas import UserCreate
+from db.database import get_db
+from fastapi import Depends 
+
 
 def get_user(db: Session, email: str):
     return db.query(User).filter(User.email == email).first()
@@ -21,3 +24,16 @@ def authenticate_user(db: Session, email: str, password: str):
     if not verify_password(password, user.hashed_password):
         return False
     return user
+
+# Remove the following incomplete function
+# def get_current_user(
+#     db: Session = Depends(get_db), 
+#     token: str = Depends(oauth2_scheme)
+# ) -> User:
+#     user = get_user_by_token(db, token)
+#     if not user:
+#         raise HTTPException(
+#             status_code=status.HTTP_401_UNAUTHORIZED,
+#             detail="Invalid authentication credentials"
+#         )
+#     return user

@@ -2,6 +2,7 @@ from sqlalchemy import Column, BIGINT, String, Enum, DECIMAL, TIMESTAMP, Foreign
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import declarative_base
 from db.database import Base
+import uuid # Import uuid module
 
 class Property(Base):
     """
@@ -12,7 +13,7 @@ class Property(Base):
     __tablename__ = "properties"
 
     # Define columns, matching your SQL schema
-    id = Column(BIGINT, primary_key=True, autoincrement=True)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4) # Changed to UUID and added default
     
     # Using UUID for user_id with proper foreign key relationship
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False, index=True)

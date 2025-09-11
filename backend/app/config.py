@@ -1,6 +1,7 @@
 import os
 from sqlalchemy import create_engine
 from pymongo import MongoClient
+from pymongo.server_api import ServerApi  # Add this import
 from pydantic_settings import BaseSettings
 from dotenv import load_dotenv
 
@@ -31,5 +32,5 @@ settings = Settings()
 postgres_engine = create_engine(settings.SQLALCHEMY_DATABASE_URL, echo=True)
 
 # MongoDB Client
-mongo_client = MongoClient(settings.MONGO_URI,server_api=ServerApi('1'))
+mongo_client = MongoClient(settings.MONGO_URI, server_api=ServerApi('1'))
 mongo_db = mongo_client[settings.MONGO_DB_NAME]

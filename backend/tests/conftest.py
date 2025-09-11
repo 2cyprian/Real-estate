@@ -3,7 +3,11 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import os
 import sys
-sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+from pathlib import Path
+
+# Add the project root (backend directory) to the Python path
+project_root = Path(__file__).parent.parent
+sys.path.insert(0, str(project_root))
 
 from fastapi.testclient import TestClient
 from app.main import app

@@ -36,6 +36,7 @@ class User(Base):
     last_name = Column(String)
     phone_number = Column(String, nullable=True) # Changed to String to accommodate leading zeros and other formats
     role = Column(Enum('owner', 'agent', 'buyer', 'tenant', 'admin', name='user_role_enum'), default='tenant', nullable=False)
+    is_active = Column(Boolean, default=True) # Add this line
     
     # Audit timestamps
     created_at = Column(DateTime, default=func.now())

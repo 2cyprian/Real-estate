@@ -8,7 +8,7 @@ from app.users.service import authenticate_user, create_user, get_user
 from datetime import timedelta
 from app.config import settings
 
-router = APIRouter(prefix="/auth", tags=["auth"])
+router = APIRouter(tags=["auth"])
 
 @router.post("/register", status_code=status.HTTP_201_CREATED)
 async def register_user(

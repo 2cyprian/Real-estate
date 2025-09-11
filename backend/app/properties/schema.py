@@ -1,9 +1,18 @@
 from pydantic import BaseModel, Field
-from typing import List, Optional, Literal
+from typing import List, Optional, Literal, Dict
 from uuid import UUID as PyUUID
 from datetime import date, datetime
 
+
 # --- Sub-models for the MongoDB Document ---
+
+
+class PropertyBase(BaseModel):
+    title: str
+    property_type: str
+    price: float
+    status: str
+    pass
 
 class Coordinates(BaseModel):
     lat: float
@@ -28,31 +37,30 @@ class Details(BaseModel):
     occupation_date: Optional[date] = None
 
 class Amenities(BaseModel):
-    pets_allowed: bool
-    furnished: bool
-    temperature_controls: int # Could be an enum later
+    pets_allowed: Optional[bool] = None
+    furnished: Optional[bool] = None
+    temperature_controls: Optional[int] = None  # could later become Enum
 
 class Features(BaseModel):
-    pool: bool
-    balcony: bool
-    flatlet: bool
-    retirement: bool
-    repossessed: bool
-    on_show: bool
-    security_estate_cluster: bool
+    pool: Optional[bool] = None
+    balcony: Optional[bool] = None
+    flatlet: Optional[bool] = None
+    retirement: Optional[bool] = None
+    repossessed: Optional[bool] = None
+    on_show: Optional[bool] = None
+    security_estate_cluster: Optional[bool] = None
 
 class ExternalFeatures(BaseModel):
-    parking: int
-    gardens: int
+    parking: Optional[int] = None
+    gardens: Optional[int] = None
 
 class PointOfInterest(BaseModel):
     name: str
     distance_km: float
 
+# 🔥 Make POIs dynamic instead of fixed categories
 class PointsOfInterest(BaseModel):
-    education: List[PointOfInterest] = []
-    health: List[PointOfInterest] = []
-    shopping: List[PointOfInterest] = []
+    categories: Dict[str, List[PointOfInterest]] = {}
 
 class Media(BaseModel):
     url: str
@@ -61,43 +69,73 @@ class Media(BaseModel):
 # --- Main MongoDB Document Schema ---
 
 class PropertyDetailsMongo(BaseModel):
-    sql_property_id: Optional[int] = None # Will be populated after SQL insert
+    sql_property_id: Optional[PyUUID] = None  # linked after SQL insert
     location: Location
-    details: Details
-    amenities: Amenities
-    features: Features
-    external_features: ExternalFeatures
-    points_of_interest: PointsOfInterest
-    media: List[Media]
+    details: Optional[Details] = None
+    amenities: Optional[Amenities] = None
+    features: Optional[Features] = None
+    external_features: Optional[ExternalFeatures] = None
+    points_of_interest: Optional[PointsOfInterest] = None
+    media: List[Media] = []
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
 # --- API Schemas ---
 
-# 1. Schema for Creating a Property (what the API receives)
-
 class PropertyCreate(BaseModel):
     # Core SQL fields
-    user_id: PyUUID
+    user_id: Optional[PyUUID] = None # Make user_id optional
     title: str
     property_type: Literal['house', 'apartment', 'land', 'commercial']
     price: float
     status: Literal['available', 'rented', 'sold'] = 'available'
-    # The entire nested MongoDB document
-    details: PropertyDetailsMongo
 
-# 2. Schema for Responding with a Property (what the API sends back)
+    # Directly attach Mongo-style fields (instead of double nesting)
+    location: Location
+    details: Optional[Details] = None
+    amenities: Optional[Amenities] = None
+    features: Optional[Features] = None
+    external_features: Optional[ExternalFeatures] = None
+    points_of_interest: Optional[PointsOfInterest] = None
+    media: List[Media] = []
 
 class PropertyResponse(BaseModel):
-    # Core SQL fields
-    id: int
+    id: PyUUID
     user_id: PyUUID
     title: str
     property_type: str
     price: float
     status: str
-    created_at: datetime
-    # The nested MongoDB details
-    details: PropertyDetailsMongo
+    mongo_document_id: Optional[str] = None # Add this field
+
+    # MongoDB fields
+    location: Optional[Location] = None  # Make location optional
+    details: Optional[Details] = None
+    amenities: Optional[Amenities] = None
+    features: Optional[Features] = None
+    external_features: Optional[ExternalFeatures] = None
+    points_of_interest: Optional[PointsOfInterest] = None
+    media: List[Media] = []
 
     class Config:
-        orm_mode = True # This allows Pydantic to read data from ORM models (like SQLAlchemy)
+        from_attributes = True # Use from_attributes instead of orm_mode for Pydantic v2
+
+class PropertyUpdate(BaseModel):
+    title: Optional[str] = None
+    property_type: Optional[Literal['house', 'apartment', 'land', 'commercial']] = None
+    price: Optional[float] = None
+    status: Optional[Literal['available', 'rented', 'sold']] = None
+    location: Optional[Location] = None
+    details: Optional[Details] = None
+    amenities: Optional[Amenities] = None
+    features: Optional[Features] = None
+    external_features: Optional[ExternalFeatures] = None
+    points_of_interest: Optional[PointsOfInterest] = None
+    media: Optional[List[Media]] = None
+
+class Property(PropertyBase):
+    id: int
+    owner_id: int
+    
+
+    class Config:
+        orm_mode = True  # allows SQLAlchemy objects to be converted automatically
