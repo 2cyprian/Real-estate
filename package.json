@@ -10,13 +10,21 @@
     "dev:mobile": "npm --workspace mobile run start",
     "dev:all": "npx turbo run dev --parallel",
     "build:web": "npm --workspace frontend-web run build",
-    "build:mobile": "npm --workspace mobile run build"
+    "build:mobile": "npm --workspace mobile run build",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/2cyprian/Real-estate.git"
   },
-  "keywords": ["real-estate", "monorepo", "typescript", "fastapi", "react", "react-native"],
+  "keywords": [
+    "real-estate",
+    "monorepo",
+    "typescript",
+    "fastapi",
+    "react",
+    "react-native"
+  ],
   "author": "Cyprian Odindo",
   "license": "ISC",
   "bugs": {
@@ -29,6 +37,7 @@
     "shared"
   ],
   "devDependencies": {
-    "turbo": "^1.10.10"
+    "turbo": "^1.10.10",
+    "husky": "^8.0.0"
   }
 }
