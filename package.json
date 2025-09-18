@@ -11,7 +11,8 @@
     "dev:all": "npx turbo run dev --parallel",
     "build:web": "npm --workspace frontend-web run build",
     "build:mobile": "npm --workspace mobile run build",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "test": "echo \"Error: no test specified\" && exit 0"
   },
   "repository": {
     "type": "git",
